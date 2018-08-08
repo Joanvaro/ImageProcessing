@@ -12,6 +12,10 @@ def gettingBinaryImage(path) :
     # Applying thresholding
     ret, thresholedImage = cv2.threshold(image,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
 
+    # Drawing Contours
+    im2, contours, hierarchy = cv2.findContours(thresholedImage, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    cv2.drawContours(thresholedImage, contours, -1, (0,255,0), 3)
+
     # Inverting the Binary image
     thresholedImage = cv2.bitwise_not(thresholedImage)
 
