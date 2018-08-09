@@ -13,26 +13,29 @@ def gettingBinaryImage(path) :
     ret, thresholedImage = cv2.threshold(image,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
 
     # Drawing Contours
-    im2, contours, hierarchy = cv2.findContours(thresholedImage, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-    cv2.drawContours(thresholedImage, contours, -1, (0,255,0), 3)
+    #im2, contours, hierarchy = cv2.findContours(thresholedImage, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    #cv2.drawContours(thresholedImage, contours, -1, (0,255,0), 3)
 
     # Inverting the Binary image
     thresholedImage = cv2.bitwise_not(thresholedImage)
+
+    # Applying Morphological Operations
+    kernel = np.ones((5,5),np.uint8)
+    #opening = cv2.morphologyEx(thresholedImage, cv2.MORPH_OPEN, kernel)
+    #opening = cv2.morphologyEx(thresholedImage, cv2.MORPH_CLOSE, kernel)
+    opening = cv2.morphologyEx(thresholedImage, cv2.MORPH_GRADIENT, kernel)
 
     '''
     Applying SIFT in order to obtain the key points of the signature
     '''
     sift = cv2.xfeatures2d.SIFT_create()
-    keyPoints = sift.detect(thresholedImage,None)
+    keyPoints = sift.detect(opening,None)
 
-    img = cv2.drawKeypoints(thresholedImage,keyPoints,image)
+    img = cv2.drawKeypoints(opening,keyPoints,image)
 
     return img
 
-
-# TODO k means implementation but first check that this code is working 
-
-image = "signature.png"
+image = "signature1.png"
 thresholedImageObtained = gettingBinaryImage(image)
 
 cv2.imshow('image',thresholedImageObtained)
