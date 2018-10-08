@@ -4,6 +4,22 @@ import cv2
 import sys
 import numpy as np
 
+def harris_corner(image):
+    image = np.float32(image)
+    dst = cv2.cornerHarris(image,2,3,0.04)
+    dst = cv2.dilate(dst,None)
+    ret, dst = cv2.threshold(dst,0.01*dst.max(),255,0)
+    dst = np.uint8(dst)
+
+    # find centroids
+    ret, labels, stats, centroids = cv2.connectedComponentsWithStats(dst)
+
+    #define criteria to stop and refine the corners
+    criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 100, 0.001)
+    corners = cv2.cornerSubPix(image,np.float32(centroids),(5,5),(-1,-1),criteria)
+
+    return corners, centroids
+
 def feature_extractor(image, featureType):
     if( featureType == 'sift' ):
         feature = cv2.xfeatures2d.SIFT_create()
@@ -12,7 +28,7 @@ def feature_extractor(image, featureType):
     elif( featureType == 'orb' ):
         feature = cv2.ORB_create()
     elif( featureType == 'harris' ):
-        print "Feature not supported"
+        return harris_corner(image)
     else:
         exit(1)
 
@@ -24,7 +40,6 @@ def matching_image(img1, kp1, kp2, desc1, desc2, outputImage):
     matches = sorted(matches, key = lambda x:x.distance)
 
     matching_result = cv2.drawMatches(img1,kp1,img2,kp2,matches[:50], None, flags=2)
-    #img1 = cv2.drawKeypoints(img1, kp1, None)
 
     cv2.imwrite(outputImage, matching_result)
     cv2.imshow('Image',matching_result)
