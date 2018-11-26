@@ -1,3 +1,5 @@
 *.o
 *.jpg
 *.png
+__init__.py
+__pycache__
