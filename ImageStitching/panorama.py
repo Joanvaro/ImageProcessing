@@ -1,5 +1,5 @@
-#!/usr/bin/python3
-from stitcher import Stitcher
+#!/usr/bin/python
+from Panorama.stitcher import Stitcher
 import argparse
 import imutils
 import cv2
@@ -25,6 +25,6 @@ stitcher = Stitcher()
 # show the images
 cv2.imshow("Image A", imageA)
 cv2.imshow("Image B", imageB)
-cv2.imshow("keypoint Matches", vis)
+cv2.imshow("Keypoint Matches", vis)
 cv2.imshow("Result", result)
 cv2.waitKey(0)
